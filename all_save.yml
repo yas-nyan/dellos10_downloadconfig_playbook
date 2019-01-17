@@ -1,0 +1,35 @@
+---
+- hosts: all        # インベントリファイルで定義したciscoグループが操作対象
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: include credential
+      include_vars: 
+        file: ./credential.yml
+    - name: save config
+      dellos10_command:
+        commands:
+          - write memory        # running-configの保存
+        provider: "{{ cli }}"
+      register: result
+      vars:
+        ansible_command_timeout: 40
+    - name: show run
+      dellos10_command:
+        commands:
+          - show run
+        provider: "{{ cli }}"
+      register: result
+    - name: save output to /etc/ansible/backups 
+      copy: 
+        content: "{{ result.stdout[0] }}"
+        dest: "{{ save_dir }}/show_run_{{ inventory_hostname }}_{{now_date}}.txt"
+
+  vars:
+    cli:   # 接続情報を辞書で定義（usernameとそれ以降はインベントリファイルから取得定義）
+      host:     "{{ inventory_hostname }}"    # ホスト対象ホスト
+      username: "{{ ansible_user }}"          # ログインユーザー
+      password: "{{ ansible_password }}"      # ログインパスワード
+      authorize: false                         # 特権モードに移行
+    now_date: "{{ lookup('pipe','date +%Y%m%d%H%M') }}"
