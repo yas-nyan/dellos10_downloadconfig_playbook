@@ -2,7 +2,6 @@
 **You can get config files from your lovely swiches.**
 
 
-## b
 ## how to use
 0. make oparator account
 ```txt:
