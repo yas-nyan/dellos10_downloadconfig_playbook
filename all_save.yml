@@ -1,5 +1,5 @@
 ---
-- hosts: all        # インベントリファイルで定義したciscoグループが操作対象
+- hosts: dell        # インベントリファイルで定義したciscoグループが操作対象
   gather_facts: no
   connection: local
 
